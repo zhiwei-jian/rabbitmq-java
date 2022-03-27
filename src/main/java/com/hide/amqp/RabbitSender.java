@@ -70,26 +70,14 @@ public class RabbitSender {
         rabbitTemplate.convertAndSend("test.topic", routingKey, objectMapper.writeValueAsBytes(message));
     }
 
-    public void directSend(Object message, Map<String, Object> properties, String routingKey) throws Exception {
+    public void directSend(Object message, Map<String, Object> properties, String routingKey, String exchangeName) throws Exception {
         MessageHeaders messageHeaders = new MessageHeaders(properties);
 
         Message msg = MessageBuilder.createMessage(message, messageHeaders);
         rabbitTemplate.setConfirmCallback(confirmCallback);
         rabbitTemplate.setReturnCallback(returnCallback);
-
-//        rabbitTemplate.convertAndSend(msg);
-
-        String id = "1234567890";
-        CorrelationData correlationData = new CorrelationData(id);
-        //exchange, routingKey, object, correlationData
-        if(StringUtils.isBlank(routingKey)){
-            routingKey = "user.abc";
-        }
-        JSONWriter rabbitmqJson = new JSONWriter();
-        String jsonmessage = rabbitmqJson.write(msg);
-
         ObjectMapper objectMapper = new ObjectMapper();
 
-        rabbitTemplate.convertAndSend("test.topic", routingKey, objectMapper.writeValueAsBytes(message));
+        rabbitTemplate.convertAndSend(exchangeName, routingKey, objectMapper.writeValueAsBytes(message));
     }
 }

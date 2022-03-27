@@ -60,11 +60,12 @@ public class MqController {
     }
 
     @PostMapping("/api/user/direct")
-    public boolean sendDirectMsg(@RequestParam("routingKey") String routingKey, @RequestBody List<User> users)
+    public boolean sendDirectMsg(@RequestParam("exchangeName") String exchangeName,
+            @RequestParam("routingKey") String routingKey, @RequestBody List<User> users)
             throws Exception {
         Map<String, Object> properties = new HashMap<>();
         properties.put("method", "direct");
-        rabbitSender.directSend(users.get(0), properties, routingKey);
+        rabbitSender.directSend(users.get(0), properties, routingKey, exchangeName);
         return true;
     }
 
